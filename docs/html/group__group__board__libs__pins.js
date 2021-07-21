@@ -1,0 +1,28 @@
+var group__group__board__libs__pins =
+[
+    [ "CY8CKIT_028_SENSE_PIN_I2C_SCL", "group__group__board__libs__pins.html#ga095bf55d551ce4f9b6ca23f9749b9ba0", null ],
+    [ "CY8CKIT_028_SENSE_PIN_I2C_SDA", "group__group__board__libs__pins.html#gac7689ec39550cb8814a36c1af724093c", null ],
+    [ "CY8CKIT_028_SENSE_PIN_SPI_SCK", "group__group__board__libs__pins.html#ga537144f2f6a4c0f8d5f58ae28906d3a2", null ],
+    [ "CY8CKIT_028_SENSE_PIN_SPI_MISO", "group__group__board__libs__pins.html#ga92b60d560a3d31eb255ae48465e5361d", null ],
+    [ "CY8CKIT_028_SENSE_PIN_SPI_MOSI", "group__group__board__libs__pins.html#ga700773f2db17f5005b6a2fa1059de1c9", null ],
+    [ "CY8CKIT_028_SENSE_PIN_SPI_CS", "group__group__board__libs__pins.html#ga4c4201055d448aec20e43788204f50ba", null ],
+    [ "CY8CKIT_028_SENSE_PIN_IMU_INT_1", "group__group__board__libs__pins.html#gaec8c3cd7ffda71e3a6706a202457da21", null ],
+    [ "CY8CKIT_028_SENSE_PIN_IMU_INT_2", "group__group__board__libs__pins.html#ga80236f3650c26fd4f5ca9c573240870d", null ],
+    [ "CY8CKIT_028_SENSE_PIN_PSEN_INT", "group__group__board__libs__pins.html#gadb3034a6e31a912f6ac9c0b6dd302518", null ],
+    [ "CY8CKIT_028_SENSE_PIN_MCU_MCLK", "group__group__board__libs__pins.html#gaacb930b1c2fe03848dda2176fb521d05", null ],
+    [ "CY8CKIT_028_SENSE_PIN_RX_SDI", "group__group__board__libs__pins.html#ga7935d22d77b7477d1d4c6543c5c6e456", null ],
+    [ "CY8CKIT_028_SENSE_PIN_RX_WS", "group__group__board__libs__pins.html#ga1a81b7fe766efbf56ab11867dfdbaf7a", null ],
+    [ "CY8CKIT_028_SENSE_PIN_RX_SCK", "group__group__board__libs__pins.html#ga80244bef9c7fa9abead3903efb5dec6a", null ],
+    [ "CY8CKIT_028_SENSE_PIN_TX_SDO", "group__group__board__libs__pins.html#ga79f0f4206f9111a33a81f30793418090", null ],
+    [ "CY8CKIT_028_SENSE_PIN_TX_WS", "group__group__board__libs__pins.html#gaba83f8977ed6b8302084e7b02c35f641", null ],
+    [ "CY8CKIT_028_SENSE_PIN_TX_SCK", "group__group__board__libs__pins.html#ga8e01946e8559ec36fc60cf4dab55492f", null ],
+    [ "CY8CKIT_028_SENSE_PIN_I2S_IF", "group__group__board__libs__pins.html#gadce05f3526f3047d07c24dbd2258e642", null ],
+    [ "CY8CKIT_028_SENSE_PIN_VM_AOUT", "group__group__board__libs__pins.html#gaaee3cc3c35c7256d847c1f5ecb15e3b4", null ],
+    [ "CY8CKIT_028_SENSE_PIN_VM_PSO", "group__group__board__libs__pins.html#ga030bc3faa7a505ffe9f54d9e35c8cfa3", null ],
+    [ "CY8CKIT_028_SENSE_PIN_VM_MODE", "group__group__board__libs__pins.html#ga3ed17d6c344978286135dc629eba0f15", null ],
+    [ "CY8CKIT_028_SENSE_PIN_VM_DOUT", "group__group__board__libs__pins.html#gac52e340e997f13a29cd1d8288ff0e7b6", null ],
+    [ "CY8CKIT_028_SENSE_PIN_PDM_CLK", "group__group__board__libs__pins.html#ga15a4cbcfa9061f37625378299b588bc0", null ],
+    [ "CY8CKIT_028_SENSE_PIN_PDM_DATA", "group__group__board__libs__pins.html#gaf95d8c4a82794e53e8b93404435770fa", null ],
+    [ "CY8CKIT_028_SENSE_PIN_PDM1_VDD", "group__group__board__libs__pins.html#ga58eaee1530cd6093ec457820312b3952", null ],
+    [ "CY8CKIT_028_SENSE_PIN_PDM2_VDD", "group__group__board__libs__pins.html#ga1b1e5728efe126ba0baa88203bbd757e", null ]
+];
