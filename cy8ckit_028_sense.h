@@ -10,7 +10,9 @@
  *
  ***************************************************************************************************
  * \copyright
- * Copyright 2021 Cypress Semiconductor Corporation
+ * Copyright 2021-2024 Cypress Semiconductor Corporation (an Infineon company) or
+ * an affiliate of Cypress Semiconductor Corporation
+ *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -51,22 +53,22 @@
  * \addtogroup group_board_libs_orientation
  * \{
  * The orientation sensor is handled by the sensor-orientation-bmx160 library, details are available
- * at https://github.com/cypresssemiconductorco/sensor-orientation-bmx160.
+ * at https://github.com/infineon/sensor-orientation-bmx160.
  * \}
  * \addtogroup group_board_libs_pressure
  * \{
  * The pressure sensor is handled by the sensor-xensiv-dps3xx library, details are
- * available at https://github.com/cypresssemiconductorco/sensor-xensiv-dps3xx.
+ * available at https://github.com/infineon/sensor-xensiv-dps3xx.
  * \}
  * \addtogroup group_board_libs_display
  * \{
  * The display is handled by the display-oled-ssd1306 library, details are available at
- * https://github.com/cypresssemiconductorco/display-oled-ssd1306.
+ * https://github.com/infineon/display-oled-ssd1306.
  * \}
  * \addtogroup group_board_libs_codec
  * \{
  * The audio codec is handled by the audio-codec-wm8960 library, details are available at
- * https://github.com/cypresssemiconductorco/audio-codec-wm8960.
+ * https://github.com/infineon/audio-codec-wm8960.
  * \}
  */
 

@@ -6,7 +6,9 @@
  *
  ***************************************************************************************************
  * \copyright
- * Copyright 2021 Cypress Semiconductor Corporation
+ * Copyright 2021-2024 Cypress Semiconductor Corporation (an Infineon company) or
+ * an affiliate of Cypress Semiconductor Corporation
+ *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,16 +39,20 @@ typedef enum
     _CY8CKIT_028_SENSE_INITIALIZED_PDM = 0x08
 } cy8ckit_028_sense_initialized_t;
 
-static cyhal_i2c_t                      i2c;
-static cyhal_adc_t                      adc;
+#define IMU_SPI_FREQUENCY 10000000
+
+static cyhal_i2c_t                      _sense_i2c;
+static cyhal_spi_t                      _sense_spi;
+static cyhal_adc_t                      _sense_adc;
 
 static mtb_bmx160_t                     orientation_sensor;
 static xensiv_dps3xx_t                  pressure_sensor;
-static cyhal_pdm_pcm_t                  pdm_pcm;
+static cyhal_pdm_pcm_t                  _sense_pdm_pcm;
 
-static cyhal_i2c_t*                     i2c_ptr;
-static cyhal_adc_t*                     adc_ptr;
-static cy8ckit_028_sense_initialized_t  initialized = _CY8CKIT_028_SENSE_INITIALIZED_NONE;
+static cyhal_i2c_t*                     _sense_i2c_ptr;
+static cyhal_spi_t*                     _sense_spi_ptr;
+static cyhal_adc_t*                     _sense_adc_ptr;
+static cy8ckit_028_sense_initialized_t  _sense_initialized = _CY8CKIT_028_SENSE_INITIALIZED_NONE;
 
 //--------------------------------------------------------------------------------------------------
 // cy8ckit_028_sense_init
@@ -65,63 +71,88 @@ cy_rslt_t cy8ckit_028_sense_init(cyhal_i2c_t* i2c_inst, cyhal_spi_t* spi_inst,
             .address         = 0,
             .frequencyhal_hz = 400000
         };
-        result = cyhal_i2c_init(&i2c, CY8CKIT_028_SENSE_PIN_I2C_SDA,
+        result = cyhal_i2c_init(&_sense_i2c, CY8CKIT_028_SENSE_PIN_I2C_SDA,
                                 CY8CKIT_028_SENSE_PIN_I2C_SCL, NULL);
         if (CY_RSLT_SUCCESS == result)
         {
-            i2c_ptr = &i2c;
-            result  = cyhal_i2c_configure(&i2c, &I2C_CFG);
+            _sense_i2c_ptr = &_sense_i2c;
+            result  = cyhal_i2c_configure(&_sense_i2c, &I2C_CFG);
         }
     }
     else
     {
-        i2c_ptr = i2c_inst;
+        _sense_i2c_ptr = i2c_inst;
     }
 
     if ((CY_RSLT_SUCCESS == result) && (NULL == adc_inst))
     {
-        result = cyhal_adc_init(&adc, CY8CKIT_028_SENSE_PIN_VM_AOUT, NULL);
+        result = cyhal_adc_init(&_sense_adc, CY8CKIT_028_SENSE_PIN_VM_AOUT, NULL);
         if (CY_RSLT_SUCCESS == result)
         {
-            adc_ptr = &adc;
+            _sense_adc_ptr = &_sense_adc;
         }
     }
     else
     {
-        adc_ptr = adc_inst;
+        _sense_adc_ptr = adc_inst;
     }
 
     if (CY_RSLT_SUCCESS == result)
     {
-        result = (NULL == spi_inst)
-            ? mtb_bmx160_init_i2c(&orientation_sensor, i2c_ptr, MTB_BMX160_ADDRESS_DEFAULT)
-            : mtb_bmx160_init_spi(&orientation_sensor, spi_inst, CY8CKIT_028_SENSE_PIN_SPI_CS);
+        if (NULL == spi_inst)
+        {
+            result = cyhal_spi_init(&_sense_spi, CYBSP_SPI_MOSI, CYBSP_SPI_MISO, CYBSP_SPI_CLK, NC,
+                                    NULL, 8, CYHAL_SPI_MODE_00_MSB, false);
+            if (CY_RSLT_SUCCESS != result)
+            {
+                return result;
+            }
+
+            result = cyhal_spi_set_frequency(&_sense_spi, IMU_SPI_FREQUENCY);
+
+            if (CY_RSLT_SUCCESS == result)
+            {
+                _sense_spi_ptr = &_sense_spi;
+            }
+            else
+            {
+                return result;
+            }
+        }
+        else
+        {
+            _sense_spi_ptr = spi_inst;
+        }
+
+        result = mtb_bmx160_init_spi(&orientation_sensor, _sense_spi_ptr,
+                                     CY8CKIT_028_SENSE_PIN_SPI_CS);
     }
+
     if (CY_RSLT_SUCCESS == result)
     {
-        initialized |= _CY8CKIT_028_SENSE_INITIALIZED_ORIENTATION;
-        result = xensiv_dps3xx_mtb_init_i2c(&pressure_sensor, i2c_ptr,
+        _sense_initialized |= _CY8CKIT_028_SENSE_INITIALIZED_ORIENTATION;
+        result = xensiv_dps3xx_mtb_init_i2c(&pressure_sensor, _sense_i2c_ptr,
                                             XENSIV_DPS3XX_I2C_ADDR_DEFAULT);
     }
     if (CY_RSLT_SUCCESS == result)
     {
-        initialized |= _CY8CKIT_028_SENSE_INITIALIZED_PRESSURE;
-        result = mtb_ssd1306_init_i2c(i2c_ptr);
+        _sense_initialized |= _CY8CKIT_028_SENSE_INITIALIZED_PRESSURE;
+        result = mtb_ssd1306_init_i2c(_sense_i2c_ptr);
     }
 
     // Initialize the PDM/PCM block
     if (CY_RSLT_SUCCESS == result)
     {
-        initialized |= _CY8CKIT_028_SENSE_INITIALIZED_DISPLAY;
+        _sense_initialized |= _CY8CKIT_028_SENSE_INITIALIZED_DISPLAY;
         if ((NULL != audio_clock_inst) && (NULL != pdm_pcm_cfg))
         {
-            result = cyhal_pdm_pcm_init(&pdm_pcm, CY8CKIT_028_SENSE_PIN_PDM_DATA,
+            result = cyhal_pdm_pcm_init(&_sense_pdm_pcm, CY8CKIT_028_SENSE_PIN_PDM_DATA,
                                         CY8CKIT_028_SENSE_PIN_PDM_CLK, audio_clock_inst,
                                         pdm_pcm_cfg);
 
             if (CY_RSLT_SUCCESS == result)
             {
-                initialized |= _CY8CKIT_028_SENSE_INITIALIZED_PDM;
+                _sense_initialized |= _CY8CKIT_028_SENSE_INITIALIZED_PDM;
             }
         }
     }
@@ -158,8 +189,8 @@ xensiv_dps3xx_t* cy8ckit_028_sense_get_pressure_sensor(void)
 //--------------------------------------------------------------------------------------------------
 cyhal_pdm_pcm_t* cy8ckit_028_sense_get_pdm(void)
 {
-    return ((initialized & _CY8CKIT_028_SENSE_INITIALIZED_PDM) > 0)
-        ? &pdm_pcm
+    return ((_sense_initialized & _CY8CKIT_028_SENSE_INITIALIZED_PDM) > 0)
+        ? &_sense_pdm_pcm
         : NULL;
 }
 
@@ -169,34 +200,40 @@ cyhal_pdm_pcm_t* cy8ckit_028_sense_get_pdm(void)
 //--------------------------------------------------------------------------------------------------
 void cy8ckit_028_sense_free(void)
 {
-    if ((initialized & _CY8CKIT_028_SENSE_INITIALIZED_DISPLAY) > 0)
+    if ((_sense_initialized & _CY8CKIT_028_SENSE_INITIALIZED_DISPLAY) > 0)
     {
         mtb_ssd1306_free();
     }
-    if ((initialized & _CY8CKIT_028_SENSE_INITIALIZED_PRESSURE) > 0)
+    if ((_sense_initialized & _CY8CKIT_028_SENSE_INITIALIZED_PRESSURE) > 0)
     {
         xensiv_dps3xx_free(&pressure_sensor);
     }
-    if ((initialized & _CY8CKIT_028_SENSE_INITIALIZED_ORIENTATION) > 0)
+    if ((_sense_initialized & _CY8CKIT_028_SENSE_INITIALIZED_ORIENTATION) > 0)
     {
         mtb_bmx160_free(&orientation_sensor);
     }
-    if ((initialized & _CY8CKIT_028_SENSE_INITIALIZED_PDM) > 0)
+    if ((_sense_initialized & _CY8CKIT_028_SENSE_INITIALIZED_PDM) > 0)
     {
-        cyhal_pdm_pcm_free(&pdm_pcm);
+        cyhal_pdm_pcm_free(&_sense_pdm_pcm);
     }
-    initialized = _CY8CKIT_028_SENSE_INITIALIZED_NONE;
+    _sense_initialized = _CY8CKIT_028_SENSE_INITIALIZED_NONE;
 
-    if (i2c_ptr == &i2c)
+    if (_sense_i2c_ptr == &_sense_i2c)
     {
-        cyhal_i2c_free(i2c_ptr);
+        cyhal_i2c_free(_sense_i2c_ptr);
     }
-    i2c_ptr = NULL;
+    _sense_i2c_ptr = NULL;
+
+    if (_sense_spi_ptr == &_sense_spi)
+    {
+        cyhal_spi_free(_sense_spi_ptr);
+    }
+    _sense_spi_ptr = NULL;
 
     // This must be done last, in case other code prior to this frees an ADC channel
-    if (adc_ptr == &adc)
+    if (_sense_adc_ptr == &_sense_adc)
     {
-        cyhal_adc_free(adc_ptr);
+        cyhal_adc_free(_sense_adc_ptr);
     }
-    adc_ptr = NULL;
+    _sense_adc_ptr = NULL;
 }
